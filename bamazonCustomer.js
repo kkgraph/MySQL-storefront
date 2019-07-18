@@ -1,10 +1,10 @@
-var mysql = require("mysql");
-var inquirer = require("inquirer");
-var figlet = require("figlet");
-var colors = require("colors");
-var Table = require("cli-table3");
+const mysql = require("mysql");
+const inquirer = require("inquirer");
+const figlet = require("figlet");
+const colors = require("colors");
+const Table = require("cli-table3");
 
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
     host: "localhost",
 
     // Your port; if not 3306
@@ -65,7 +65,7 @@ function queryCustomer() {
         }
 ])
   .then(answer => {
-      const query = "Select * From products where item_id = ?";
+      const query = "SELECT * FROM products where item_id = ?";
       connection.query(query, answer.buy, function (err, res) {
           if (err) throw err;
           if (res.length > 0) {
@@ -74,17 +74,25 @@ function queryCustomer() {
                   console.log("Sorry this amount is more than we have at this time. Please try again later.");
                   setTimeout(queryCustomer, 1000);
               } else {
-                let newQuantity = (parseInt(res[0].stock_quantity) - parseInt(answer.amount));
-                const query2 = "Update products set stock_quanitity = ? where item_id = ?";
-                  connection.query(query2, newQuantity, answer.buy, function(err, res){
-                      if (err) throw err;
-                      console.log("\r\n");
-                      console.log("Your purchase has been processed. Thank you for your business, hope to see you soon!");
-                      console.log("\r\n");
-                      connect.end();
-                  }
                 
-                  );
+                let newQuantity = (parseInt(res[0].stock_quantity) - parseInt(answer.amount));
+                console.log(colors.yellow("Your purchase has been processed. Thank you for your business! Hope to see you soon. If you want more of this product, we only have ") + newQuantity + colors.yellow(" left!"));
+
+                const queryStock = "UPDATE products SET stock_quanitity = ? where item_id = ?";
+                // console.log(queryStock);
+
+                // connect.end();
+
+                //   connection.query(queryStock, newQuantity, answer.buy, function(err, result){
+                      
+                //     if (err) throw err;
+
+                //       console.log("\r\n");
+                //       console.log("Your purchase has been processed. Thank you for your business, hope to see you soon!");
+                //       console.log("\r\n");
+
+                //       connect.end();
+                //   });
               }
             
           } else {
